@@ -1,0 +1,16 @@
+Proper XML Unmarshalling
+    xml tags needed:
+        - published
+        - updated
+        - title
+        - summary
+        - author(s)
+        - category
+
+MongoDB / Database
+
+Updation every 24hrs - fetches everthing again every 24 hours (try caching)
+
+Add Cohere for reranking
+
+Make it into actual API
