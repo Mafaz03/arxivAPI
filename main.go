@@ -10,39 +10,26 @@ import (
 	"time"
 
 	"github.com/Mafaz03/arxivAPI/internal/arxivapi"
+	"github.com/Mafaz03/arxivAPI/internal/timeInfo"
 )
 
-type timeInfo struct {
-	Static_info string `json:"static_info"`
-	Last_run_time string `json:"last_run_time"`
-}
-
-func readData(filename string) (*timeInfo, error) {
-    encData, err := os.ReadFile(filename)
-    if err != nil {
-        return nil, errors.New("time related json file could not be read")
-    }
-
-    timeinfo := &timeInfo{}
-    err = json.Unmarshal(encData, timeinfo)
-    if err != nil {
-        return nil, errors.New("error unmarshaling json data")
-    }
-
-    return timeinfo, nil
-}
 
 func main() {
-	data, _ := readData("timeInfo.json")
-	
+	data, err := timeinfo.readData("timeInfo.json")
+	if err != nil {
+        fmt.Println(err)
+    }
     fmt.Println(data.Last_run_time)
+	data.Last_run_time = time.Now().Format("2006-01-02 15:04:05")
+	writeData("timeInfo.json", data)
+	fmt.Println(data.Last_run_time)
 
 	client := arxivapi.NewClient(time.Minute)
 	xmlData := client.FetchPapers()
 
 	x := arxivapi.Feed{}
 
-	err := xml.Unmarshal([]byte(xmlData), &x)
+	err = xml.Unmarshal([]byte(xmlData), &x)
 	if err != nil {
 		log.Fatal(err)
 	}

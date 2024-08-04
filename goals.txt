@@ -6,10 +6,12 @@ Proper XML Unmarshalling
         - summary
         - author(s)
         - category
+    DONE
+
+Updation every 24hrs - fetches everthing again every 24 hours (try caching)
 
 MongoDB / Database
 
-Updation every 24hrs - fetches everthing again every 24 hours (try caching)
 
 Add Cohere for reranking
 
