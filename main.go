@@ -15,6 +15,7 @@ import (
 
 
 func main() {
+	timeinfo.readData
 	data, err := timeinfo.readData("timeInfo.json")
 	if err != nil {
         fmt.Println(err)
