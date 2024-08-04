@@ -10,12 +10,12 @@ import (
 	"time"
 
 	"github.com/Mafaz03/arxivAPI/internal/arxivapi"
-	"github.com/Mafaz03/arxivAPI/internal/timeInfo"
+	"github.com/Mafaz03/arxivAPI/internal/timeinfo"
 )
 
 
 func main() {
-	timeinfo.readData
+	
 	data, err := timeinfo.readData("timeInfo.json")
 	if err != nil {
         fmt.Println(err)
