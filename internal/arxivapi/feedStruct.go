@@ -32,3 +32,17 @@ type Feed struct {
 		} `bson:"category" xml:"category"`
 	} `bson:"entry" xml:"entry"`
 }
+
+
+type Feedjson struct {
+	Entry []struct {
+		Updated   string `json:"updated"`
+		Published string `json:"published"`
+		Title     string `json:"title"`
+		Summary   string `json:"summary"`
+		Author    []struct {
+			Name string `json:"name"`
+		} `json:"author"`
+
+	} `json:"entry"`
+}

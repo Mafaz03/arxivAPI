@@ -40,7 +40,6 @@ func newMongoServer() *mongoServer {
 	}
 }
 
-
 func (worker *mongoServer) addData(doc arxivapi.Feed) {
 	coll := worker.client.Database("cs").Collection("AI")
 	result, err := coll.InsertOne(context.TODO(), doc)
@@ -51,17 +50,66 @@ func (worker *mongoServer) addData(doc arxivapi.Feed) {
 
 }
 
-func (worker *mongoServer) fetchData() {
+type singleEntry struct {
+	Updated   string `json:"updated"`
+	Published string `json:"published"`
+	Title     string `json:"title"`
+	Summary   string `json:"summary"`
+	Author    []struct {
+		Name string `json:"name"`
+	} `json:"author"`
+}
+
+func (worker *mongoServer) fetchData() map[int]singleEntry {
 	coll := worker.client.Database("cs").Collection("AI")
-	
+
 	var result arxivapi.Feed
 	findOptions := options.FindOne().SetSort(bson.D{{Key: "updated", Value: -1}})
 
-	err := coll.FindOne(context.TODO(), bson.D{}, findOptions).Decode(&result)
+	// Delete the oldest if count excedes
+	count, err := coll.CountDocuments(context.TODO(), bson.D{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	fmt.Printf(result.Entry[0].Summary)
+	if count > 5 {
+		fmt.Printf("Documents in Database (%v) has execed the limit (5), continuing to Delete the oldest", count)
+		findOptions_Delete := options.FindOneAndDelete().SetSort(bson.D{{Key: "updates", Value: 1}})
 
+		err := coll.FindOneAndDelete(context.TODO(), bson.D{}, findOptions_Delete)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	err = coll.FindOne(context.TODO(), bson.D{}, findOptions).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	jsonData := make(map[int]singleEntry)
+
+	for i, entry := range result.Entry {
+		// Create a new entry for Feedjson
+		newEntry := struct {
+			Updated   string `json:"updated"`
+			Published string `json:"published"`
+			Title     string `json:"title"`
+			Summary   string `json:"summary"`
+			Author    []struct {
+				Name string `json:"name"`
+			} `json:"author"`
+		}{
+			Updated:   entry.Updated,
+			Published: entry.Published,
+			Title:     entry.Title,
+			Summary:   entry.Summary,
+			Author: []struct {
+				Name string "json:\"name\""
+			}(entry.Author),
+		}
+
+		jsonData[i] = newEntry
+	}
+
+	return jsonData
 }

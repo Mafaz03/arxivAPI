@@ -1,6 +1,7 @@
 package main
 
 import (
+	// "encoding/json"
 	"encoding/xml"
 	"fmt"
 	"log"
@@ -58,8 +59,7 @@ func main() {
 		worker.addData(feed)
 	}
 
-
-	worker.fetchData()
-
-
+	feed := worker.fetchData()
+	fmt.Println(feed)
+	
 }
