@@ -62,6 +62,4 @@ func main() {
 	worker.fetchData()
 
 
-	
-
 }
