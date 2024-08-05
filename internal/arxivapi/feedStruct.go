@@ -1,67 +1,34 @@
 package arxivapi
 
-import "encoding/xml"
+// import "encoding/xml"
 
 type Feed struct {
-	XMLName xml.Name `xml:"feed"`
-	Text    string   `xml:",chardata"`
-	Xmlns   string   `xml:"xmlns,attr"`
-	Link    struct {
-		Text string `xml:",chardata"`
-		Href string `xml:"href,attr"`
-		Rel  string `xml:"rel,attr"`
-		Type string `xml:"type,attr"`
-	} `xml:"link"`
-	Title struct {
-		Text string `xml:",chardata"`
-		Type string `xml:"type,attr"`
-	} `xml:"title"`
-	ID           string `xml:"id"`
-	Updated      string `xml:"updated"`
-	TotalResults struct {
-		Text       string `xml:",chardata"`
-		Opensearch string `xml:"opensearch,attr"`
-	} `xml:"totalResults"`
-	StartIndex struct {
-		Text       string `xml:",chardata"`
-		Opensearch string `xml:"opensearch,attr"`
-	} `xml:"startIndex"`
-	ItemsPerPage struct {
-		Text       string `xml:",chardata"`
-		Opensearch string `xml:"opensearch,attr"`
-	} `xml:"itemsPerPage"`
+	ID           string `bson:"id" xml:"id"`
+	Updated      string `bson:"updated" xml:"updated"`
 	Entry []struct {
-		Text      string `xml:",chardata"`
-		ID        string `xml:"id"`
-		Updated   string `xml:"updated"`
-		Published string `xml:"published"`
-		Title     string `xml:"title"`
-		Summary   string `xml:"summary"`
+		ID        string `bson:"id" xml:"id"`
+		Updated   string `bson:"updated" xml:"updated"`
+		Published string `bson:"published" xml:"published"`
+		Title     string `bson:"title" xml:"title"`
+		Summary   string `bson:"summary" xml:"summary"`
 		Author    []struct {
-			Text string `xml:",chardata"`
-			Name string `xml:"name"`
-		} `xml:"author"`
+			Name string `bson:"name" xml:"name"`
+		} `bson:"author" xml:"author"`
 		Comment []struct {
-			Text  string `xml:",chardata"`
-			Arxiv string `xml:"arxiv,attr"`
-		} `xml:"comment"`
+			Text string `bson:"text" xml:"text"`
+		} `bson:"comment" xml:"comment"`
 		Link []struct {
-			Text  string `xml:",chardata"`
-			Href  string `xml:"href,attr"`
-			Rel   string `xml:"rel,attr"`
-			Type  string `xml:"type,attr"`
-			Title string `xml:"title,attr"`
-		} `xml:"link"`
+			Href string `bson:"href" xml:"href"`
+			Rel  string `bson:"rel" xml:"rel"`
+			Type string `bson:"type" xml:"type"`
+		} `bson:"link" xml:"link"`
 		PrimaryCategory []struct {
-			Text   string `xml:",chardata"`
-			Arxiv  string `xml:"arxiv,attr"`
-			Term   string `xml:"term,attr"`
-			Scheme string `xml:"scheme,attr"`
-		} `xml:"primary_category"`
+			Term   string `bson:"term" xml:"term"`
+			Scheme string `bson:"scheme" xml:"scheme"`
+		} `bson:"primary_category" xml:"primary_category"`
 		Category []struct {
-			Text   string `xml:",chardata"`
-			Term   string `xml:"term,attr"`
-			Scheme string `xml:"scheme,attr"`
-		} `xml:"category"`
-	} `xml:"entry"`
-} 
+			Term   string `bson:"term" xml:"term"`
+			Scheme string `bson:"scheme" xml:"scheme"`
+		} `bson:"category" xml:"category"`
+	} `bson:"entry" xml:"entry"`
+}

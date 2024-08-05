@@ -8,9 +8,11 @@ import (
 
 	"github.com/Mafaz03/arxivAPI/internal/arxivapi"
 	"github.com/Mafaz03/arxivAPI/internal/timeinfo"
+	// "go.mongodb.org/mongo-driver/bson"
 )
 
-func fetch() {
+func fetch() arxivapi.Feed{
+	
 	client := arxivapi.NewClient(time.Minute)
 	xmlData := client.FetchPapers()
 
@@ -21,21 +23,20 @@ func fetch() {
 		log.Fatal(err)
 	}
 	if len(x.Entry) == 0 {
-		// fmt.Println("Empty")
-		return
+		fmt.Println("Fetched Data returned empty")
+		return arxivapi.Feed{}
 	}
-
-	// for i := range len(x.Entry) {
-	// 	// fmt.Println(x.Entry[i].Title + "\n")
-	// }
 
 	for i := range 5 {
 		fmt.Println(x.Entry[i].Title + "\n\n")
 	}
+	return x
 }
+
 
 func main() {
 
+	
 	data, err := timeinfo.ReadData("timeInfo.json")
 	if err != nil {
 		fmt.Println(err)
@@ -43,16 +44,24 @@ func main() {
 
 	now_time := time.Now().UTC()
 
+	worker := newMongoServer()
+
 	diff := now_time.Sub(data.LastRunTimeParsed)
 	if diff > time.Hour {
-		fmt.Println("Updating the times (its been over 1 hour(s) since last update)")
+		fmt.Println("Updating the time, it has been over 1 hour(s) since last update")
 		err = timeinfo.UpdateLastRunTime("timeInfo.json")
 		if err != nil {
 			fmt.Println("Error updating last run time:", err)
 			return
-		}
+		} 
+		feed := fetch()
+		worker.addData(feed)
 	}
 
-	fetch()
+
+	worker.fetchData()
+
+
+	
 
 }

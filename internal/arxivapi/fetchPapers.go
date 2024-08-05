@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-const url = "http://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending"
+const url = "http://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=10&sortBy=submittedDate&sortOrder=descending"
 
 func (c *Client) FetchPapers() string {
 	req, err := http.NewRequest("GET", url, nil)

@@ -10,8 +10,8 @@ Proper XML Unmarshalling
 
 Updation every 24hrs - fetches everthing again every 24 hours (try caching)
 
-MongoDB / Database
-
+MongoDB / Database  
+    DONE
 
 Add Cohere for reranking
 
