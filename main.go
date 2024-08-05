@@ -5,17 +5,19 @@ import (
 	"encoding/xml"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/Mafaz03/arxivAPI/internal/arxivapi"
-	"github.com/Mafaz03/arxivAPI/internal/timeinfo"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/cors"
 	// "go.mongodb.org/mongo-driver/bson"
 )
 
-func fetch() arxivapi.Feed{
+func fetch(amount int, db string, collection string) arxivapi.Feed{
 	
 	client := arxivapi.NewClient(time.Minute)
-	xmlData := client.FetchPapers()
+	xmlData := client.FetchPapers(amount, db, collection)
 
 	x := arxivapi.Feed{}
 
@@ -37,29 +39,33 @@ func fetch() arxivapi.Feed{
 
 func main() {
 
-	
-	data, err := timeinfo.ReadData("timeInfo.json")
+
+	router := chi.NewRouter()
+
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Link"},
+		AllowCredentials: false,
+		MaxAge:           300,
+	}))
+
+	r1router := chi.NewRouter()
+	r1router.Get("/healthz", handler_readiness)
+	r1router.Get("/getInfo/{db_col_amount}", get_Feeds)
+
+	router.Mount("/v1", r1router)
+
+	srv := &http.Server{
+		Handler: router,
+		Addr:    ":" + "8080",
+	}
+	log.Printf("listening on Port number: %v", 8080)
+	err := srv.ListenAndServe()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal("ERROR: ", err)
 	}
 
-	now_time := time.Now().UTC()
-
-	worker := newMongoServer()
-
-	diff := now_time.Sub(data.LastRunTimeParsed)
-	if diff > time.Hour {
-		fmt.Println("Updating the time, it has been over 1 hour(s) since last update")
-		err = timeinfo.UpdateLastRunTime("timeInfo.json")
-		if err != nil {
-			fmt.Println("Error updating last run time:", err)
-			return
-		} 
-		feed := fetch()
-		worker.addData(feed)
-	}
-
-	feed := worker.fetchData()
-	fmt.Println(feed)
+	// feed := worker.fetchData()
 	
 }

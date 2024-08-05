@@ -34,20 +34,18 @@ func newMongoServer() *mongoServer {
 	if err != nil {
 		log.Fatal("could not connect to MongoDB, make sure the instance is valid and running")
 	}
-
 	return &mongoServer{
 		client: mongo_client,
 	}
 }
 
-func (worker *mongoServer) addData(doc arxivapi.Feed) {
-	coll := worker.client.Database("cs").Collection("AI")
+func (worker *mongoServer) addData(doc arxivapi.Feed, db string, collection string) {
+	coll := worker.client.Database(db).Collection(collection)
 	result, err := coll.InsertOne(context.TODO(), doc)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("Inserted document with _id: %v\n", result.InsertedID)
-
 }
 
 type singleEntry struct {
@@ -60,8 +58,57 @@ type singleEntry struct {
 	} `json:"author"`
 }
 
-func (worker *mongoServer) fetchData() map[int]singleEntry {
-	coll := worker.client.Database("cs").Collection("AI")
+func checkDatabaseExists(ctx context.Context, client *mongo.Client, databaseName string) (bool, error) {
+	databases, err := client.ListDatabaseNames(ctx, nil)
+	if err != nil {
+		return false, err
+	}
+
+	for _, db := range databases {
+		if db == databaseName {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func checkCollectionExists(ctx context.Context, client *mongo.Client, databaseName string, collectionName string) (bool, error) {
+	collections, err := client.Database(databaseName).ListCollectionNames(ctx, nil)
+	if err != nil {
+		return false, err
+	}
+
+	for _, coll := range collections {
+		if coll == collectionName {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func checkDatabaseCollectionExists(ctx context.Context, client *mongo.Client, databaseName string, collectionName string) bool {
+	// Check if the database exists
+	databaseExists, err := checkDatabaseExists(ctx, client, databaseName)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	if !databaseExists {
+		return false
+	}
+
+	// Check if the collection exists
+	collectionExists, err := checkCollectionExists(ctx, client, databaseName, collectionName)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	return collectionExists
+}
+
+func (worker *mongoServer) fetchData(amount int, db string, collection string) (map[int]singleEntry, int64) {
+	coll := worker.client.Database(db).Collection(collection)
 
 	var result arxivapi.Feed
 	findOptions := options.FindOne().SetSort(bson.D{{Key: "updated", Value: -1}})
@@ -109,7 +156,10 @@ func (worker *mongoServer) fetchData() map[int]singleEntry {
 		}
 
 		jsonData[i] = newEntry
+		if i+1 >= amount {
+			break
+		}
 	}
 
-	return jsonData
+	return jsonData, count
 }

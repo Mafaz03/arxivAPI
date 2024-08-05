@@ -1,14 +1,15 @@
 package arxivapi
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 )
 
-const url = "http://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=10&sortBy=submittedDate&sortOrder=descending"
 
-func (c *Client) FetchPapers() string {
+func (c *Client) FetchPapers(amount int, db string, collection string) string {
+	url := fmt.Sprintf("http://export.arxiv.org/api/query?search_query=cat:%s.%s&start=0&max_results=%v&sortBy=submittedDate&sortOrder=descending", db, collection, amount)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatal(err)

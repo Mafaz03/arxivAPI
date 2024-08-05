@@ -9,7 +9,8 @@ Proper XML Unmarshalling
     DONE
 
 Updation every 24hrs - fetches everthing again every 24 hours (try caching)
-
+    DONE
+    
 MongoDB / Database  
     DONE
 
