@@ -71,7 +71,7 @@ func get_Feeds(w http.ResponseWriter, r *http.Request) {
 
 	
 
-	if diff > time.Microsecond || count == 0 {
+	if diff > time.Hour || count == 0 {
 		fmt.Println("Updating the time, it has been over 1 hour(s) since last update")
 		err = timeinfo.UpdateLastRunTime("timeInfo.json")
 		if err != nil {
