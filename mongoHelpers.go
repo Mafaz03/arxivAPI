@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/Mafaz03/arxivAPI/internal/arxivapi"
+
 	"github.com/joho/godotenv"
 
 	// "go.mongodb.org/mongo-driver/bson"
@@ -52,6 +53,7 @@ type singleEntry struct {
 	Updated   string `json:"updated"`
 	Published string `json:"published"`
 	Title     string `json:"title"`
+	NewsTitle string `json:"newstitle"`
 	Summary   string `json:"summary"`
 	Author    []struct {
 		Name string `json:"name"`
@@ -134,13 +136,14 @@ func (worker *mongoServer) fetchData(amount int, db string, collection string) (
 	}
 
 	jsonData := make(map[int]singleEntry)
-
+	
 	for i, entry := range result.Entry {
 		// Create a new entry for Feedjson
 		newEntry := struct {
 			Updated   string `json:"updated"`
 			Published string `json:"published"`
 			Title     string `json:"title"`
+			NewsTitle string `json:"newstitle"`
 			Summary   string `json:"summary"`
 			Author    []struct {
 				Name string `json:"name"`
@@ -149,6 +152,7 @@ func (worker *mongoServer) fetchData(amount int, db string, collection string) (
 			Updated:   entry.Updated,
 			Published: entry.Published,
 			Title:     entry.Title,
+			NewsTitle: entry.NewsTitle,
 			Summary:   entry.Summary,
 			Author: []struct {
 				Name string "json:\"name\""

@@ -14,7 +14,7 @@ const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-func getCompletion() string{
+func GetTitle(title string) string{
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal(err)
@@ -23,19 +23,19 @@ func getCompletion() string{
 	if openaiapi == "" {
 		log.Fatal("enter valid api key, learn more at: https://platform.openai.com/api-keys")
 	}
-
+	
 	client := resty.New()
 	response, err := client.R().SetAuthToken(openaiapi).SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
 			"model":      "gpt-3.5-turbo",
-			"messages":   []interface{}{map[string]interface{}{"role": "system", "content": "Hi can you tell me what is the factorial of 10?"}},
+			"messages":   []interface{}{map[string]interface{}{"role": "system", "content": fmt.Sprintf("Generate news title on: %s", title)}},
 			"max_tokens": 50,
 		}).Post(apiEndpoint)
 
 	if err != nil {
-		log.Fatalf("Error while sending send the request: %v", err)
+		log.Fatalf("Error while sending send the request: %s", err)
 	}
-	data := make(map[string]interface{})
+	var data map[string]interface{}
 	err = json.Unmarshal(response.Body(), &data)
 	if err != nil {
         fmt.Println("Error while decoding JSON response:", err)

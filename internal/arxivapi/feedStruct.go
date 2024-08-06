@@ -3,13 +3,14 @@ package arxivapi
 // import "encoding/xml"
 
 type Feed struct {
-	ID           string `bson:"id" xml:"id"`
-	Updated      string `bson:"updated" xml:"updated"`
-	Entry []struct {
+	ID      string `bson:"id" xml:"id"`
+	Updated string `bson:"updated" xml:"updated"`
+	Entry   []struct {
 		ID        string `bson:"id" xml:"id"`
 		Updated   string `bson:"updated" xml:"updated"`
 		Published string `bson:"published" xml:"published"`
 		Title     string `bson:"title" xml:"title"`
+		NewsTitle string `bson:"newstitle" xml:"newstitle"`
 		Summary   string `bson:"summary" xml:"summary"`
 		Author    []struct {
 			Name string `bson:"name" xml:"name"`
@@ -33,16 +34,15 @@ type Feed struct {
 	} `bson:"entry" xml:"entry"`
 }
 
-
 type Feedjson struct {
 	Entry []struct {
 		Updated   string `json:"updated"`
 		Published string `json:"published"`
 		Title     string `json:"title"`
+		NewsTitle string `json:"newstitle"`
 		Summary   string `json:"summary"`
 		Author    []struct {
 			Name string `json:"name"`
 		} `json:"author"`
-
 	} `json:"entry"`
 }
