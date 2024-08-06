@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/Mafaz03/arxivAPI/internal/arxivapi"
+	// "github.com/Mafaz03/arxivAPI/internal/ai"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	// "go.mongodb.org/mongo-driver/bson"
@@ -39,7 +40,7 @@ func fetch(amount int, db string, collection string) arxivapi.Feed{
 
 func main() {
 
-
+	getCompletion()
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
