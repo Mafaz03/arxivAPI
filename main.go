@@ -24,12 +24,9 @@ func fetch(amount int, db string, collection string) arxivapi.Feed{
 	x := arxivapi.Feed{}
 	err := xml.Unmarshal([]byte(xmlData), &x)
 
-	fmt.Println("here1", len(x.Entry))
-
 	for i := 0; i < len(x.Entry); i++ {
         x.Entry[i].NewsTitle = ai.GetTitle(x.Entry[i].Title)
     }
-	fmt.Println("here12")
 	if err != nil {
 		log.Fatal(err)
 	}
