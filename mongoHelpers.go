@@ -54,6 +54,7 @@ type singleEntry struct {
 	Published string `json:"published"`
 	Title     string `json:"title"`
 	NewsTitle string `json:"newstitle"`
+	Image     string `json:"image"`
 	Summary   string `json:"summary"`
 	Author    []struct {
 		Name string `json:"name"`
@@ -136,7 +137,7 @@ func (worker *mongoServer) fetchData(amount int, db string, collection string) (
 	}
 
 	jsonData := make(map[int]singleEntry)
-	
+
 	for i, entry := range result.Entry {
 		// Create a new entry for Feedjson
 		newEntry := struct {
@@ -144,6 +145,7 @@ func (worker *mongoServer) fetchData(amount int, db string, collection string) (
 			Published string `json:"published"`
 			Title     string `json:"title"`
 			NewsTitle string `json:"newstitle"`
+			Image     string `json:"image"`
 			Summary   string `json:"summary"`
 			Author    []struct {
 				Name string `json:"name"`
@@ -153,6 +155,7 @@ func (worker *mongoServer) fetchData(amount int, db string, collection string) (
 			Published: entry.Published,
 			Title:     entry.Title,
 			NewsTitle: entry.NewsTitle,
+			Image:     entry.Image,
 			Summary:   entry.Summary,
 			Author: []struct {
 				Name string "json:\"name\""

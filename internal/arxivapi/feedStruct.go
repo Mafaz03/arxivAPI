@@ -11,6 +11,7 @@ type Feed struct {
 		Published string `bson:"published" xml:"published"`
 		Title     string `bson:"title" xml:"title"`
 		NewsTitle string `bson:"newstitle" xml:"newstitle"`
+		Image     string `bson:"image" xml:"image"`
 		Summary   string `bson:"summary" xml:"summary"`
 		Author    []struct {
 			Name string `bson:"name" xml:"name"`
@@ -40,6 +41,7 @@ type Feedjson struct {
 		Published string `json:"published"`
 		Title     string `json:"title"`
 		NewsTitle string `json:"newstitle"`
+		Image     string `json:"image"`
 		Summary   string `json:"summary"`
 		Author    []struct {
 			Name string `json:"name"`

@@ -1,23 +1,21 @@
 package main
 
 import (
-	// "encoding/json"
 	"encoding/xml"
 	"fmt"
 	"log"
+
 	"net/http"
 	"time"
 
 	"github.com/Mafaz03/arxivAPI/ai"
 	"github.com/Mafaz03/arxivAPI/internal/arxivapi"
-	// "github.com/Mafaz03/arxivAPI/ai"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
-	// "go.mongodb.org/mongo-driver/bson"
 )
 
-func fetch(amount int, db string, collection string) arxivapi.Feed{
-	
+func fetch(amount int, db string, collection string) arxivapi.Feed {
+
 	client := arxivapi.NewClient(time.Minute)
 	xmlData := client.FetchPapers(amount, db, collection)
 
@@ -25,8 +23,9 @@ func fetch(amount int, db string, collection string) arxivapi.Feed{
 	err := xml.Unmarshal([]byte(xmlData), &x)
 
 	for i := 0; i < len(x.Entry); i++ {
-        x.Entry[i].NewsTitle = ai.GetTitle(x.Entry[i].Title)
-    }
+		x.Entry[i].NewsTitle = ai.GetTitle(x.Entry[i].Title)
+		x.Entry[i].Image, _ = getImages(x.Entry[i].Title)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,11 +38,10 @@ func fetch(amount int, db string, collection string) arxivapi.Feed{
 }
 
 
+
 func main() {
-	
-	// content := ai.GetCompletion()
-	// fmt.Println(content)
-	
+
+
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{
@@ -70,6 +68,4 @@ func main() {
 		log.Fatal("ERROR: ", err)
 	}
 
-	// feed := worker.fetchData()
-	
 }
