@@ -33,7 +33,7 @@ func newMongoServer() *mongoServer {
 	}
 	mongo_client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
-		log.Fatal("could not connect to MongoDB, make sure the instance is valid and running")
+		log.Fatal("could not connect to MongoDB, make sure the instance is valid and running: ", err)
 	}
 	return &mongoServer{
 		client: mongo_client,
