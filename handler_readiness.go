@@ -48,7 +48,7 @@ func get_Feeds(w http.ResponseWriter, r *http.Request) {
 
 	worker := newMongoServer()
 	db_col_amount := chi.URLParam(r, "db_col_amount")
-	split1 := strings.Split(db_col_amount, "-")
+	split1 := strings.Split(db_col_amount, "~")
 	amount, err := strconv.Atoi(split1[1])
 	if err != nil {
 		log.Fatal("could not convert amount to int")
@@ -65,7 +65,6 @@ func get_Feeds(w http.ResponseWriter, r *http.Request) {
 	}
 
 	feed, count := worker.fetchData(amount, db_col[0], db_col[1])
-	fmt.Println("2")
 	diff := now_time.Sub(data.LastRunTimeParsed)
 	fmt.Println(count)
 
