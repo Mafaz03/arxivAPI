@@ -15,7 +15,7 @@ import (
 )
 
 func fetch(amount int, db string, collection string) arxivapi.Feed {
-
+	var imageQuery string
 	client := arxivapi.NewClient(time.Minute)
 	xmlData := client.FetchPapers(amount, db, collection)
 
@@ -23,8 +23,8 @@ func fetch(amount int, db string, collection string) arxivapi.Feed {
 	err := xml.Unmarshal([]byte(xmlData), &x)
 
 	for i := 0; i < len(x.Entry); i++ {
-		x.Entry[i].NewsTitle = ai.GetTitle(x.Entry[i].Title)
-		x.Entry[i].Image, _ = getImages(x.Entry[i].Title)
+		x.Entry[i].NewsTitle, imageQuery = ai.GetTitle(x.Entry[i].Title)
+		x.Entry[i].Image, _ = getImages(imageQuery)
 	}
 	if err != nil {
 		log.Fatal(err)
