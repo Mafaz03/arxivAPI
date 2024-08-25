@@ -121,13 +121,25 @@ func (worker *mongoServer) fetchData(amount int, db string, collection string) (
 	if err != nil {
 		log.Fatal(err)
 	}
-	if count > 5 {
-		fmt.Printf("Documents in Database (%v) has execed the limit (5), continuing to Delete the oldest", count)
-		findOptions_Delete := options.FindOneAndDelete().SetSort(bson.D{{Key: "updates", Value: 1}})
+	// if count > 5 {
+	// 	fmt.Printf("Documents in Database (%v) has execed the limit (5), continuing to Delete the oldest", count)
+	// 	findOptions_Delete := options.FindOneAndDelete().SetSort(bson.D{{Key: "updates", Value: 1}})
 
-		err := coll.FindOneAndDelete(context.TODO(), bson.D{}, findOptions_Delete)
-		if err != nil {
-			log.Fatal(err)
+	// 	err := coll.FindOneAndDelete(context.TODO(), bson.D{}, findOptions_Delete)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// }
+
+	if count > 5 {
+		fmt.Printf("Documents in Database (%v) has exceeded the limit (5), continuing to delete the oldest.\n", count)
+		findOptions_Delete := options.FindOneAndDelete().SetSort(bson.D{{Key: "updates", Value: 1}})
+	
+		result := coll.FindOneAndDelete(context.TODO(), bson.D{}, findOptions_Delete)
+		if result.Err() != nil {
+			log.Fatalf("Failed to delete the oldest document: %v", result.Err())
+		} else {
+			fmt.Println("Successfully deleted the oldest document.")
 		}
 	}
 

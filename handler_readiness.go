@@ -67,7 +67,7 @@ func get_Feeds(w http.ResponseWriter, r *http.Request) {
 	feed, count := worker.fetchData(amount, db_col[0], db_col[1])
 	diff := now_time.Sub(data.LastRunTimeParsed)
 	fmt.Println(count)
-
+	
 	
 
 	if diff > time.Hour || count == 0 {
